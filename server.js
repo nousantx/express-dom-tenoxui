@@ -1,26 +1,39 @@
 import express from 'express'
 import { Window } from 'happy-dom'
 import { MakeTenoxUI } from '@tenoxui/core'
+import { property } from '@tenoxui/property'
 
 const app = express()
 const PORT = 3000
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
+  const templateHtml = `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+  </head>
+  <body>
+    <h1 class="text-red">Hello World</h1>
+    
+    <div class="box-200px bg-red"></div>
+  </body>
+  </html>`
+
   const window = new Window()
   const document = window.document
 
-  const title = document.createElement('h1')
-  title.textContent = 'Hello, Express with Happy DOM!'
-  title.className = '[background]-blue'
-  document.body.appendChild(title)
+  document.write(templateHtml)
 
-  // initialize tenoxuo
-  const tenoxui = new MakeTenoxUI({
-    element: title
-  })
-
-  title.classList.forEach(className => {
-    tenoxui.applyStyles(className)
+  // initialize tenoxui
+  document.querySelectorAll('*').forEach(element => {
+    const tenoxui = new MakeTenoxUI({ element, property })
+    element.classList.forEach(className => {
+      tenoxui.applyStyles(className)
+    })
   })
 
   res.send(document.documentElement.outerHTML)
